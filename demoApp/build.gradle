@@ -41,3 +41,11 @@ task stopDB (type:Exec) {
     commandLine "docker", "stop", "demoAppDB"
 }
 
+bootRun {
+    main = 'com.example.demoApp.DemoAppApplication'
+    systemProperties['DB_URL'] = "jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    systemProperties['DB_DRIVER'] = DB_DRIVER
+    systemProperties['DB_USERNAME'] = DB_USERNAME
+    systemProperties['DB_PASSWORD'] = DB_PASSWORD
+    systemProperties['HIBERNATE_DIALECT'] = HIBERNATE_DIALECT
+}
