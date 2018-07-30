@@ -11,51 +11,46 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
-public class Person {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Version
     private int version;
 
     @NotNull
+    @Size(max = 50)
     @Column(name = "fname", nullable = false)
     private String firstName;
 
     @NotNull
+    @Size(max = 50)
     @Column(name = "lname", nullable = false)
     private String lastName;
 
     @NotNull
+    @Size(max = 100)
     @Column(nullable = false)
     private String address;
 
     @NotNull
+    @Size(max = 30)
     @Column(nullable = false)
     private String city;
 
     @OneToMany(mappedBy = "owner")
     private Set<Account> accounts = new HashSet<>();
 
-    public Person() {
-    }
-
-    public Person(String firstName, String lastName, String address, String city) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.city = city;
-    }
-
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
