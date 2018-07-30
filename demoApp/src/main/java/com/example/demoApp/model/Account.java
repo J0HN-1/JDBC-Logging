@@ -10,7 +10,7 @@ public class Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 
 	@Version
 	private int version;
@@ -18,7 +18,7 @@ public class Account {
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "owner", nullable = false)
-	private Person owner;
+	private User owner;
 
 	@NotNull
 	@Column
@@ -34,19 +34,19 @@ public class Account {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus status;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Person getOwner() {
+	public User getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Person owner) {
+	public void setOwner(User owner) {
 		this.owner = owner;
 	}
 

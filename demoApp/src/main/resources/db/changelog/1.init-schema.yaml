@@ -3,10 +3,10 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: jonathan
-      comment: 'Create PERSON table'
+      comment: 'Create USER table'
       changes:
         - createTable:
-            tableName: person
+            tableName: user
             columns:
               - column:
                   name: id
@@ -68,8 +68,8 @@ databaseChangeLog:
                   type: int
                   constraints:
                     nullable: false
-                    foreignKeyName: FK_account_owner_person_id
-                    references: person(id)
+                    foreignKeyName: FK_account_owner_user_id
+                    references: user(id)
               - column:
                   name: balance
                   type: decimal(10,2)
@@ -93,7 +93,7 @@ databaseChangeLog:
       comment: 'Create TRANSACTIONS table'
       changes:
         - createTable:
-            tableName: transactions
+            tableName: transaction
             columns:
               - column:
                   name: id
@@ -106,15 +106,24 @@ databaseChangeLog:
                   name: from_account
                   type: int
                   constraints:
-                    foreignKeyName: FK_transactions_from_account_id
+                    foreignKeyName: FK_transaction_from_account_id
                     references: account(id)
               - column:
                   name: to_account
                   type: int
                   constraints:
-                    nullable: false
-                    foreignKeyName: FK_transactions_to_account_id
+                    foreignKeyName: FK_transaction_to_account_id
                     references: account(id)
+              - column:
+                  name: transaction_type
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
               - column:
                   name: transaction_date
                   type: timestamp
