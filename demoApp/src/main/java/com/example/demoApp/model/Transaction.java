@@ -20,7 +20,6 @@ public class Transaction {
     @JoinColumn(name = "from_account")
     private Account originAccount;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "to_account")
     private Account destinationAccount;
