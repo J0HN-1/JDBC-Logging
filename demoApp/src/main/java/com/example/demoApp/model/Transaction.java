@@ -1,7 +1,5 @@
 package com.example.demoApp.model;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -34,7 +32,6 @@ public class Transaction {
     private double amount = 0.0;
 
     @NotNull
-    @CreationTimestamp
     @Temporal(TIMESTAMP)
     @Column(name = "transaction_date", nullable = false)
     private Date date;
@@ -42,6 +39,16 @@ public class Transaction {
     @NotNull
     @Column(nullable = false)
     private String comments;
+
+    @PrePersist
+    private void persist() {
+        date = new Date();
+    }
+
+    @PreUpdate
+    private void update() {
+        throw new RuntimeException("Transaction cannot be changed after it's committed");
+    }
 
     public Integer getId() {
         return id;
