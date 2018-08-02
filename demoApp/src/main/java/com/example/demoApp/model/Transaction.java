@@ -47,7 +47,7 @@ public class Transaction {
 
     @PreUpdate
     private void update() {
-        throw new RuntimeException("Transaction cannot be changed after it's committed");
+        throw new UnsupportedOperationException("Transaction cannot be changed after it's committed");
     }
 
     public Integer getId() {

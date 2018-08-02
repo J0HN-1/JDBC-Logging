@@ -18,7 +18,7 @@ databaseChangeLog:
               - column:
                   name: version
                   type: int
-                  defaultValueNumeric: 0
+                  defaultValueNumeric: 1
                   constraints:
                     nullable: false
               - column:
@@ -60,7 +60,7 @@ databaseChangeLog:
               - column:
                   name: version
                   type: int
-                  defaultValueNumeric: 0
+                  defaultValueNumeric: 1
                   constraints:
                     nullable: false
               - column:
