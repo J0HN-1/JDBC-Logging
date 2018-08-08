@@ -4,18 +4,28 @@ import com.example.demoApp.model.Account;
 import com.example.demoApp.model.AccountStatus;
 import com.example.demoApp.model.AccountType;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import javax.validation.constraints.NotNull;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
+
+import static com.example.demoApp.service.dto.View.*;
 
 public class AccountDTO {
 
     @JsonProperty(access = READ_ONLY)
     public Integer id;
 
+    @NotNull
     public Integer ownerId;
 
+    @JsonView(AccountTypeView.class)
+    @NotNull
     public AccountType type;
 
+    @JsonView(AccountStatusView.class)
+    @NotNull
     public AccountStatus status;
 
     @JsonProperty(access = READ_ONLY)

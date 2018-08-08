@@ -1,5 +1,9 @@
 package com.example.demoApp.service.impl;
 
+import com.example.demoApp.exception.ApiError;
+import com.example.demoApp.service.EntityNotFoundException;
+import com.example.demoApp.service.InsufficientFunds;
+import com.example.demoApp.exception.ValidationException;
 import com.example.demoApp.model.Account;
 import com.example.demoApp.model.Transaction;
 import com.example.demoApp.repository.AccountRepository;
@@ -10,12 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.demoApp.model.TransactionType.*;
-import static com.example.demoApp.model.AccountStatus.*;
-import static javax.transaction.Transactional.TxType.*;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -39,35 +42,20 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionDTO addTransaction(TransactionDTO transactionDTO) {
         Account originAccount = null;
         Account destinationAccount = null;
-
-        if (transactionDTO.amount <= 0) {
-            throw new IllegalArgumentException("Transaction amount must be a positive number");
-        }
+        List<ApiError> validationErrors;
 
         if (transactionDTO.originAccount != null) {
-            originAccount = accountRepository.findById(transactionDTO.originAccount)
-                    .orElseThrow(() -> new NoSuchEntityException(Account.class, transactionDTO.originAccount));
-        } else {
-            if (transactionDTO.transactionType != DEPOSIT) {
-                throw new InvalidTransaction("Missing origin account in transaction: " + transactionDTO);
-            }
+            originAccount = accountRepository.findById(transactionDTO.originAccount).get();
         }
 
         if (transactionDTO.destinationAccount != null) {
-            destinationAccount = accountRepository.findById(transactionDTO.destinationAccount)
-                    .orElseThrow(() -> new NoSuchEntityException(Account.class, transactionDTO.destinationAccount));
-        } else {
-            if (transactionDTO.transactionType != WITHDRAWAL) {
-                throw new InvalidTransaction("Missing destination account in transaction: " + transactionDTO);
-            }
+            destinationAccount = accountRepository.findById(transactionDTO.destinationAccount).get();
         }
 
-        if(originAccount != null && (originAccount.getStatus() == BLOCKED || originAccount.getStatus() == CLOSED)) {
-            throw new InvalidTransaction("Invalid origin account. (status: " + originAccount.getStatus() + ")");
-        }
+        validationErrors = validateTransaction(transactionDTO, originAccount, destinationAccount);
 
-        if(destinationAccount != null && (destinationAccount.getStatus() == BLOCKED || destinationAccount.getStatus() == CLOSED)) {
-            throw new InvalidTransaction("Invalid destination account. (status: " + destinationAccount.getStatus() + ")");
+        if (!validationErrors.isEmpty()) {
+            throw new ValidationException(validationErrors);
         }
 
         if (originAccount != null && originAccount.getBalance() < transactionDTO.amount) {
@@ -92,8 +80,39 @@ public class TransactionServiceImpl implements TransactionService {
         return new TransactionDTO(transactionRepository.save(transaction));
     }
 
+    private List<ApiError> validateTransaction(TransactionDTO transactionDTO, Account origin, Account destination) {
+        List<ApiError> validationErrors = new ArrayList<>();
+
+        if (transactionDTO.amount <= 0) {
+            validationErrors.add(new ApiError("Invalid amount", "Transaction amount must be a positive number"));
+        }
+
+        if ((origin == null) == transactionDTO.transactionType.shouldHaveOriginAccount) {
+            validationErrors.add(new ApiError("Invalid Transaction", transactionDTO.transactionType.name() +
+                    " transaction " + (origin == null ? "must" : "mustn't") + " have an origin account"));
+        }
+
+        if ((destination == null) == transactionDTO.transactionType.shouldHaveDestinationAccount) {
+            validationErrors.add(new ApiError("Invalid Transaction", transactionDTO.transactionType.name() +
+                    " transaction " + (origin == null ? "must" : "mustn't") + " have a destination account"));
+        }
+
+        if (origin != null && !origin.getStatus().canBeOriginOf(transactionDTO.transactionType)) {
+            validationErrors.add(new ApiError("Invalid transaction", "Can't move money from origin account." +
+                    "(status: " + origin.getStatus() + ")"));
+        }
+
+        if (destination != null && !destination.getStatus().canBeDestinationOf(transactionDTO.transactionType)) {
+            validationErrors.add(new ApiError("Invalid transaction", "Can't move money to destination account. " +
+                    "(status: " + destination.getStatus() + ")"));
+        }
+
+        return validationErrors;
+    }
+
     private Transaction getTransactionEntity(int transactionId) {
-        return transactionRepository.findById(transactionId).orElseThrow(() -> new NoSuchEntityException(Transaction.class, transactionId));
+        return transactionRepository.findById(transactionId).orElseThrow(() -> new EntityNotFoundException
+                (Transaction.class, transactionId));
     }
 
     @Autowired

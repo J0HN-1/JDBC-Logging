@@ -7,7 +7,8 @@ import com.example.demoApp.model.User;
 import com.example.demoApp.repository.AccountRepository;
 import com.example.demoApp.repository.UserRepository;
 import com.example.demoApp.service.AccountService;
-import com.example.demoApp.service.NoSuchEntityException;
+import com.example.demoApp.service.EntityNotFoundException;
+import com.example.demoApp.service.InvalidEntityReference;
 import com.example.demoApp.service.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Account account = new Account();
-        account.setOwner(userRepository.findById(accountDTO.ownerId).orElseThrow(() -> new NoSuchEntityException(User.class, accountDTO.ownerId)));
+        account.setOwner(userRepository.findById(accountDTO.ownerId).orElseThrow(() -> new InvalidEntityReference(User.class, accountDTO.ownerId)));
         account.setType(accountDTO.type);
         account.setStatus(accountDTO.status);
         return new AccountDTO(accountRepository.save(account));
@@ -65,13 +66,8 @@ public class AccountServiceImpl implements AccountService {
         setAccountStatus(accountId, LIMITED);
     }
 
-    @Override
-    public void deleteAccount(int accountId) {
-        accountRepository.delete(getAccountEntity(accountId));
-    }
-
     private Account getAccountEntity(int accountId) {
-        return accountRepository.findById(accountId).orElseThrow(() -> new NoSuchEntityException(Account.class, accountId));
+        return accountRepository.findById(accountId).orElseThrow(() -> new EntityNotFoundException(Account.class, accountId));
     }
 
     @Autowired

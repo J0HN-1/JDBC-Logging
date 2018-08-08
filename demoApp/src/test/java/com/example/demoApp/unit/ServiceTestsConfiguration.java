@@ -28,6 +28,7 @@ import java.util.Properties;
 @EntityScan(basePackages = "com.example.demoApp.model")
 @EnableTransactionManagement
 public class ServiceTestsConfiguration {
+
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()

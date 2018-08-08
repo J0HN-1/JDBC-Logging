@@ -2,7 +2,7 @@ package com.example.demoApp.service.impl;
 
 import com.example.demoApp.model.User;
 import com.example.demoApp.repository.UserRepository;
-import com.example.demoApp.service.NoSuchEntityException;
+import com.example.demoApp.service.EntityNotFoundException;
 import com.example.demoApp.service.UserService;
 import com.example.demoApp.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUserEntity(int userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new NoSuchEntityException(User.class, userId));
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(User.class, userId));
     }
 
     private User userFromDTO(UserDTO userDTO) {

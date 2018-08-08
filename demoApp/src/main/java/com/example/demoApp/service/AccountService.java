@@ -19,6 +19,4 @@ public interface AccountService {
     void setAccountStatus(int accountId, AccountStatus status);
 
     void markAccountAsLimited(int accountId);
-
-    void deleteAccount(int accountId);
 }

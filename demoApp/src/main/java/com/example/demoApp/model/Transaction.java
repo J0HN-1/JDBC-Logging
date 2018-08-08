@@ -1,6 +1,7 @@
 package com.example.demoApp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -36,7 +37,7 @@ public class Transaction {
     @Column(name = "transaction_date", nullable = false)
     private Date date;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private String comments;
 

@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -23,22 +24,22 @@ public class User {
     @Version
     private int version;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     @Column(name = "fname", nullable = false)
     private String firstName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     @Column(name = "lname", nullable = false)
     private String lastName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 100)
     @Column(nullable = false)
     private String address;
 
-    @NotNull
+    @NotBlank
     @Size(max = 30)
     @Column(nullable = false)
     private String city;
