@@ -72,7 +72,7 @@ databaseChangeLog:
                     references: user(id)
               - column:
                   name: balance
-                  type: decimal(10,2)
+                  type: double(10,2)
                   defaultValueNumeric: 0.00
                   constraints:
                     nullable: false
@@ -121,7 +121,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: amount
-                  type: decimal(10,2)
+                  type: double(10,2)
                   constraints:
                     nullable: false
               - column:

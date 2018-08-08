@@ -9,13 +9,14 @@ import com.example.demoApp.service.UserService;
 import com.example.demoApp.service.dto.AccountDTO;
 import com.example.demoApp.service.dto.TransactionDTO;
 import com.example.demoApp.service.dto.UserDTO;
+import com.example.demoApp.unit.ServiceTestsConfiguration;
 import com.example.demoApp.util.TestUtils;
 import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import javax.sql.DataSource;
 import java.util.Random;
@@ -23,8 +24,8 @@ import java.util.Random;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@Ignore
-public class LimitAccountWithInsufficientFundsStepDefinitions extends BaseSpringIntegrationTest {
+@ContextConfiguration(classes = ServiceTestsConfiguration.class)
+public class LimitAccountWithInsufficientFundsStepDefinitions {
     private static final int ORIGIN_ACCOUNT_ID = 1;
     private static final int DESTINATION_ACCOUNT_ID = 2;
 
@@ -86,3 +87,4 @@ public class LimitAccountWithInsufficientFundsStepDefinitions extends BaseSpring
         TestUtils.cleanDB(dataSource);
     }
 }
+

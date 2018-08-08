@@ -2,9 +2,8 @@ package com.example.demoApp.service.dto;
 
 import com.example.demoApp.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
@@ -14,19 +13,19 @@ public class UserDTO {
     @JsonProperty(access = READ_ONLY)
     public Integer id;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     public String firstName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     public String lastName;
 
-    @NotNull
+    @NotBlank
     @Size(max = 100)
     public String address;
 
-    @NotNull
+    @NotBlank
     @Size(max = 30)
     public String city;
 

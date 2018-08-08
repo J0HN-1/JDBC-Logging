@@ -5,7 +5,6 @@ import com.example.demoApp.model.AccountStatus;
 import com.example.demoApp.model.AccountType;
 import com.example.demoApp.repository.AccountRepository;
 import com.example.demoApp.service.AccountService;
-import com.example.demoApp.service.NoSuchEntityException;
 import com.example.demoApp.service.dto.AccountDTO;
 import com.example.demoApp.util.CleanDatabaseRule;
 import org.junit.Rule;
@@ -15,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.validation.ConstraintViolationException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -40,13 +41,13 @@ public class AccountServiceTests {
     }
 
     @Sql("/db/sql/dummy_user.sql")
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void accountMustHaveType() {
         accountService.createAccount(new AccountDTO(null, 1, null, AccountStatus.OPEN));
     }
 
     @Sql("/db/sql/dummy_user.sql")
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void accountMustHavestatus() {
         accountService.createAccount(new AccountDTO(null, 1, AccountType.PRIVATE, null));
     }
