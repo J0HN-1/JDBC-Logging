@@ -47,6 +47,18 @@ public class User {
     @OneToMany(mappedBy = "owner")
     private Set<Account> accounts = new HashSet<>();
 
+    public User() {
+    }
+
+    public User(Integer id, @NotBlank @Size(max = 50) String firstName, @NotBlank @Size(max = 50) String lastName,
+                @NotBlank @Size(max = 100) String address, @NotBlank @Size(max = 30) String city) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -87,4 +99,11 @@ public class User {
         this.city = city;
     }
 
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
+    }
 }
