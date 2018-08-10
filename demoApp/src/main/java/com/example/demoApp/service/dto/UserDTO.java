@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import java.util.Objects;
+
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
 public class UserDTO {
@@ -46,5 +48,33 @@ public class UserDTO {
         lastName = user.getLastName();
         address = user.getAddress();
         city = user.getCity();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return Objects.equals(id, userDTO.id) &&
+                Objects.equals(firstName, userDTO.firstName) &&
+                Objects.equals(lastName, userDTO.lastName) &&
+                Objects.equals(address, userDTO.address) &&
+                Objects.equals(city, userDTO.city);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, address, city);
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                '}';
     }
 }

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -48,10 +49,5 @@ public class UserServiceImpl implements UserService {
         user.setAddress(userDTO.address);
         user.setCity(userDTO.city);
         return user;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 }

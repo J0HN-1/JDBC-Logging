@@ -76,7 +76,9 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = new Transaction();
         transaction.setOriginAccount(originAccount);
         transaction.setDestinationAccount(destinationAccount);
+        transaction.setTransactionType(transactionDTO.transactionType);
         transaction.setAmount(transactionDTO.amount);
+        transaction.setComments(transactionDTO.comments);
         return new TransactionDTO(transactionRepository.save(transaction));
     }
 

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+import static java.util.Objects.*;
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
 public class TransactionDTO {
@@ -46,8 +47,8 @@ public class TransactionDTO {
 
     public TransactionDTO(Transaction transaction) {
         id = transaction.getId();
-        originAccount = transaction.getOriginAccount().getId();
-        destinationAccount = transaction.getDestinationAccount().getId();
+        originAccount = isNull(transaction.getOriginAccount()) ? null : transaction.getOriginAccount().getId();
+        destinationAccount = isNull(transaction.getDestinationAccount()) ? null : transaction.getDestinationAccount().getId();
         transactionType = transaction.getTransactionType();
         date = transaction.getDate();
         amount = transaction.getAmount();
