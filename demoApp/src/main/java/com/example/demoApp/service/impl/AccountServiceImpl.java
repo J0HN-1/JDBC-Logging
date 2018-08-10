@@ -43,6 +43,7 @@ public class AccountServiceImpl implements AccountService {
         account.setOwner(userRepository.findById(accountDTO.ownerId).orElseThrow(() -> new InvalidEntityReference(User.class, accountDTO.ownerId)));
         account.setType(accountDTO.type);
         account.setStatus(accountDTO.status);
+        account.setBalance(accountDTO.balance);
         return new AccountDTO(accountRepository.save(account));
     }
 

@@ -51,5 +51,6 @@ public class AccountDTO {
         ownerId = account.getOwner().getId();
         type = account.getType();
         status = account.getStatus();
+        balance = account.getBalance();
     }
 }

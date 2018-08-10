@@ -5,6 +5,6 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "src/test/resources/bdd/limit_account_with_insufficient_funds.feature")
+@CucumberOptions(features = "src/test/resources/bdd/transactions_flow.feature")
 public class BaseCucumberIntegrationTest {
 }

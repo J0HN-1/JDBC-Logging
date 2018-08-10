@@ -7,7 +7,6 @@ import com.example.demoApp.repository.TransactionRepository;
 import com.example.demoApp.service.TransactionService;
 import com.example.demoApp.service.dto.TransactionDTO;
 import com.example.demoApp.util.CleanDatabaseRule;
-import com.example.demoApp.util.TestUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class TransactionServiceTests {
     @Test(expected = UnsupportedOperationException.class)
     @Sql({"classpath:db/sql/dummy_user.sql", "classpath:db/sql/dummy_account.sql", "classpath:db/sql/dummy_transaction.sql"})
     public void testTransactionsAreReadOnly() {
-        Transaction transaction = transactionRepository.findById(1).get();
+        Transaction transaction = transactionRepository.findAll().get(0);
         transaction.setComments("new comment");
         try {
             transactionRepository.save(transaction);
