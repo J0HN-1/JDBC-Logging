@@ -37,7 +37,8 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(getUserEntity(userId));
     }
 
-    private User getUserEntity(int userId) {
+    @Override
+    public User getUserEntity(int userId) {
         return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(User.class, userId));
     }
 

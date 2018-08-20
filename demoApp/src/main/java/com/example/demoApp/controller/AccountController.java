@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -42,7 +43,8 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO account, BindingResult bindingResult) {
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO account, BindingResult
+            bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new RequestBindingException(bindingResult);
         }
@@ -55,9 +57,12 @@ public class AccountController {
         return ResponseEntity.created(location).body(newAccount);
     }
 
-    @JsonView(AccountTypeView.class)
     @PutMapping(value = "/{id}/type")
-    public ResponseEntity<AccountDTO> changeAccountType(@PathVariable int id, @Valid @RequestBody AccountDTO account, BindingResult bindingResult) {
+    public ResponseEntity<AccountDTO> changeAccountType(@PathVariable int id,
+                                                        @JsonView(AccountTypeView.class)
+                                                        @Validated(AccountTypeView.class)
+                                                        @RequestBody AccountDTO account,
+                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new RequestBindingException(bindingResult);
         }
@@ -70,9 +75,12 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
     }
 
-    @JsonView(AccountStatusView.class)
     @PutMapping(value = "/{id}/status")
-    public ResponseEntity<AccountDTO> changeAccountStatus(@PathVariable int id, @Valid @RequestBody AccountDTO account, BindingResult bindingResult) {
+    public ResponseEntity<AccountDTO> changeAccountStatus(@PathVariable int id,
+                                                          @JsonView(AccountStatusView.class)
+                                                          @Validated(AccountStatusView.class)
+                                                          @Valid @RequestBody AccountDTO account,
+                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new RequestBindingException(bindingResult);
         }

@@ -1,12 +1,10 @@
 package com.example.demoApp.service.impl;
 
 import com.example.demoApp.exception.ApiError;
-import com.example.demoApp.service.EntityNotFoundException;
-import com.example.demoApp.service.InsufficientFunds;
 import com.example.demoApp.exception.ValidationException;
 import com.example.demoApp.model.Account;
 import com.example.demoApp.model.Transaction;
-import com.example.demoApp.repository.AccountRepository;
+import com.example.demoApp.model.TransactionType;
 import com.example.demoApp.repository.TransactionRepository;
 import com.example.demoApp.service.*;
 import com.example.demoApp.service.dto.TransactionDTO;
@@ -18,13 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.demoApp.model.TransactionType.*;
+import static com.example.demoApp.model.TransactionType.DEPOSIT;
+import static com.example.demoApp.model.TransactionType.TRANSFER;
+import static com.example.demoApp.model.TransactionType.WITHDRAWAL;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
+    private static final String VALIDATION_ERROR = "Validation Error";
 
+    @Autowired
     private AccountService accountService;
-    private AccountRepository accountRepository;
+
+    @Autowired
     private TransactionRepository transactionRepository;
 
     @Override
@@ -40,17 +43,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionDTO addTransaction(TransactionDTO transactionDTO) {
-        Account originAccount = null;
-        Account destinationAccount = null;
         List<ApiError> validationErrors;
-
-        if (transactionDTO.originAccount != null) {
-            originAccount = accountRepository.findById(transactionDTO.originAccount).get();
-        }
-
-        if (transactionDTO.destinationAccount != null) {
-            destinationAccount = accountRepository.findById(transactionDTO.destinationAccount).get();
-        }
+        Account originAccount = getAccount(transactionDTO.originAccount);
+        Account destinationAccount = getAccount(transactionDTO.destinationAccount);
 
         validationErrors = validateTransaction(transactionDTO, originAccount, destinationAccount);
 
@@ -82,30 +77,44 @@ public class TransactionServiceImpl implements TransactionService {
         return new TransactionDTO(transactionRepository.save(transaction));
     }
 
+    private Account getAccount(Integer AccountId) {
+        try {
+            return AccountId == null ? null : accountService.getAccountEntity(AccountId);
+        } catch (EntityNotFoundException e) {
+            throw new InvalidEntityReferenceException(Account.class, AccountId);
+        }
+    }
+
     private List<ApiError> validateTransaction(TransactionDTO transactionDTO, Account origin, Account destination) {
         List<ApiError> validationErrors = new ArrayList<>();
 
+        if (transactionDTO.transactionType == TRANSFER && origin != null && origin.getId().equals(destination.getId())) {
+            validationErrors.add(new ApiError(VALIDATION_ERROR, "Cannot transfer to same account"));
+        }
+
         if (transactionDTO.amount <= 0) {
-            validationErrors.add(new ApiError("Invalid amount", "Transaction amount must be a positive number"));
+            validationErrors.add(new ApiError(VALIDATION_ERROR, "Transaction amount must be a positive number"));
         }
 
         if ((origin == null) == transactionDTO.transactionType.shouldHaveOriginAccount) {
-            validationErrors.add(new ApiError("Invalid Transaction", transactionDTO.transactionType.name() +
+            validationErrors.add(new ApiError(VALIDATION_ERROR, transactionDTO.transactionType.name() +
                     " transaction " + (origin == null ? "must" : "mustn't") + " have an origin account"));
         }
 
         if ((destination == null) == transactionDTO.transactionType.shouldHaveDestinationAccount) {
-            validationErrors.add(new ApiError("Invalid Transaction", transactionDTO.transactionType.name() +
+            validationErrors.add(new ApiError(VALIDATION_ERROR, transactionDTO.transactionType.name() +
                     " transaction " + (origin == null ? "must" : "mustn't") + " have a destination account"));
         }
 
-        if (origin != null && !origin.getStatus().canBeOriginOf(transactionDTO.transactionType)) {
-            validationErrors.add(new ApiError("Invalid transaction", "Can't move money from origin account." +
+        if (transactionDTO.transactionType != DEPOSIT && origin != null
+                && !origin.getStatus().canBeOriginOf(transactionDTO.transactionType)) {
+            validationErrors.add(new ApiError(VALIDATION_ERROR, "Can't move money from origin account." +
                     "(status: " + origin.getStatus() + ")"));
         }
 
-        if (destination != null && !destination.getStatus().canBeDestinationOf(transactionDTO.transactionType)) {
-            validationErrors.add(new ApiError("Invalid transaction", "Can't move money to destination account. " +
+        if (transactionDTO.transactionType != WITHDRAWAL && destination != null
+                && !destination.getStatus().canBeDestinationOf(transactionDTO.transactionType)) {
+            validationErrors.add(new ApiError(VALIDATION_ERROR, "Can't move money to destination account. " +
                     "(status: " + destination.getStatus() + ")"));
         }
 
@@ -115,20 +124,5 @@ public class TransactionServiceImpl implements TransactionService {
     private Transaction getTransactionEntity(int transactionId) {
         return transactionRepository.findById(transactionId).orElseThrow(() -> new EntityNotFoundException
                 (Transaction.class, transactionId));
-    }
-
-    @Autowired
-    public void setAccountService(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    @Autowired
-    public void setAccountRepository(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
-
-    @Autowired
-    public void setTransactionRepository(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
     }
 }

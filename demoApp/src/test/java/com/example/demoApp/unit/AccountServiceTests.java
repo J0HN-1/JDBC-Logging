@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,11 +24,8 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = ServiceTestsConfiguration.class)
+@Transactional
 public class AccountServiceTests {
-
-    @Rule
-    @Autowired
-    public CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule();
 
     @Autowired
     private AccountRepository accountRepository;
@@ -37,7 +35,7 @@ public class AccountServiceTests {
 
     @Test(expected = Exception.class)
     public void accountMustHaveOwner() {
-        accountService.createAccount(new AccountDTO(null, null, AccountType.PRIVATE, AccountStatus.OPEN));
+        accountService.createAccount(new AccountDTO(null, 1, AccountType.PRIVATE, AccountStatus.OPEN));
     }
 
     @Sql("/db/sql/dummy_user.sql")
@@ -48,8 +46,18 @@ public class AccountServiceTests {
 
     @Sql("/db/sql/dummy_user.sql")
     @Test(expected = ConstraintViolationException.class)
-    public void accountMustHavestatus() {
+    public void accountMustHaveStatus() {
         accountService.createAccount(new AccountDTO(null, 1, AccountType.PRIVATE, null));
+    }
+
+    @Sql("/db/sql/dummy_user.sql")
+    public void createAccount() {
+        AccountDTO account = accountService.createAccount(new AccountDTO(null, 1, AccountType.PRIVATE, AccountStatus.OPEN));
+        assertThat(account.id, is(1));
+        assertThat(account.ownerId, is(1));
+        assertThat(account.status, is(AccountStatus.OPEN));
+        assertThat(account.type, is(AccountType.PRIVATE));
+        assertThat(account.balance, is(0.0));
     }
 
     @Test

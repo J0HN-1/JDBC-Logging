@@ -51,6 +51,20 @@ public class Transaction {
         throw new UnsupportedOperationException("Transaction cannot be changed after it's committed");
     }
 
+    public Transaction() {
+    }
+
+    public Transaction(Integer id, Account originAccount, Account destinationAccount, @NotNull TransactionType
+            transactionType, @NotNull double amount, @NotNull Date date, @NotBlank String comments) {
+        this.id = id;
+        this.originAccount = originAccount;
+        this.destinationAccount = destinationAccount;
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.date = date;
+        this.comments = comments;
+    }
+
     public Integer getId() {
         return id;
     }
