@@ -3,24 +3,23 @@ package com.example.demoApp.bdd;
 import com.example.demoApp.model.TransactionType;
 import com.example.demoApp.service.TransactionService;
 import com.example.demoApp.service.dto.TransactionDTO;
-import com.example.demoApp.unit.ServiceTestsConfiguration;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.exparity.hamcrest.date.DateMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Random;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 import static com.example.demoApp.bdd.AccountSettingsStepDefinitions.DESTINATION_ACCOUNT_ID;
 import static com.example.demoApp.bdd.AccountSettingsStepDefinitions.ORIGIN_ACCOUNT_ID;
+import static com.example.demoApp.model.TransactionType.DEPOSIT;
+import static com.example.demoApp.model.TransactionType.WITHDRAWAL;
+import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-import static com.example.demoApp.model.TransactionType.*;
-import static java.util.Objects.*;
-
-//@ContextConfiguration(classes = ServiceTestsConfiguration.class)
 public class TransactionsStepDefinitions {
 
     private Integer originAccount;
@@ -49,7 +48,7 @@ public class TransactionsStepDefinitions {
     public void the_transaction_is_saved(String negation) {
         if (isNull(negation)) {
             TransactionDTO transaction = transactionService.getTransaction(savedTransactionId);
-            assertThat(transaction.date, is(notNullValue()));
+            assertThat(transaction.date, DateMatchers.within(1, ChronoUnit.SECONDS, new Date()));
             assertThat(transaction.originAccount, is(originAccount));
             assertThat(transaction.destinationAccount, is(destinationAccount));
             assertThat(transaction.amount, is(transactionAmount));

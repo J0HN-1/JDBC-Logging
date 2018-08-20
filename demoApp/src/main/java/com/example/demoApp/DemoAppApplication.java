@@ -13,6 +13,7 @@ import java.util.List;
 @SpringBootApplication
 public class DemoAppApplication implements WebMvcConfigurer {
     public static final String REST_API_PREFIX = "/v1/api";
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static void main(String[] args) {
         SpringApplication.run(DemoAppApplication.class, args);

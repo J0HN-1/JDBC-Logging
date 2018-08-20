@@ -1,7 +1,9 @@
 package com.example.demoApp.service.dto;
 
+import com.example.demoApp.DemoAppApplication;
 import com.example.demoApp.model.Transaction;
 import com.example.demoApp.model.TransactionType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Min;
@@ -24,11 +26,12 @@ public class TransactionDTO {
     @NotNull
     public TransactionType transactionType;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DemoAppApplication.DATE_FORMAT, timezone = "UTC")
     public Date date;
 
     @NotNull
     @Min(0)
-    public double amount;
+    public Double amount;
 
     @NotBlank
     public String comments;
@@ -38,9 +41,16 @@ public class TransactionDTO {
 
     public TransactionDTO(Integer originAccount, Integer destinationAccount, TransactionType transactionType,
                           double amount, String comments) {
+        this(null, originAccount, destinationAccount, transactionType, null, amount, comments);
+    }
+
+    public TransactionDTO(Integer id, Integer originAccount, Integer destinationAccount, @NotNull TransactionType
+            transactionType, Date date, @NotNull @Min(0) double amount, @NotBlank String comments) {
+        this.id = id;
         this.originAccount = originAccount;
         this.destinationAccount = destinationAccount;
         this.transactionType = transactionType;
+        this.date = date;
         this.amount = amount;
         this.comments = comments;
     }

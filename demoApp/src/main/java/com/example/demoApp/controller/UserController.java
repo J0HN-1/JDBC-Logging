@@ -19,23 +19,25 @@ import static com.example.demoApp.DemoAppApplication.REST_API_PREFIX;
 import static org.springframework.http.MediaType.*;
 
 @RestController
-@RequestMapping(value = REST_API_PREFIX + "/users")
+@RequestMapping(value = REST_API_PREFIX + "/users",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}")
     public UserDTO getUser(@PathVariable int id) {
         return userService.getUser(id);
     }
 
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -50,7 +52,7 @@ public class UserController {
         return ResponseEntity.created(location).body(newUser);
     }
 
-    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}")
     public UserDTO updateUser(@PathVariable int id, @Valid @RequestBody UserDTO user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new RequestBindingException(bindingResult);

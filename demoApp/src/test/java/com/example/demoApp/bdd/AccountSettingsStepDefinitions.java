@@ -27,7 +27,7 @@ public class AccountSettingsStepDefinitions {
     public void origin_account_open_exists_with_balance(AccountStatus status, AccountType type, Double balance) {
         double accountBalance = balance == null ? 0 : balance;
         AccountType accountType = type == null ? AccountType.PRIVATE : type;
-        UserDTO user = UserService.saveUser(new UserDTO(1, "John", "Doe", "some street", "some city"));
+        UserDTO user = UserService.saveUser(new UserDTO(null, "John", "Doe", "some street", "some city"));
         AccountDTO account = new AccountDTO(null, user.id, accountType, status, accountBalance);
         ORIGIN_ACCOUNT_ID = accountService.createAccount(account).id;
     }
@@ -36,7 +36,7 @@ public class AccountSettingsStepDefinitions {
     public void destination_open_account_exists(AccountStatus status, AccountType type, Double balance) {
         double accountBalance = balance == null ? 0 : balance;
         AccountType accountType = type == null ? AccountType.PRIVATE : type;
-        UserDTO user = UserService.saveUser(new UserDTO(2, "Jane", "Doe", "some street", "some city"));
+        UserDTO user = UserService.saveUser(new UserDTO(null, "Jane", "Doe", "some street", "some city"));
         AccountDTO account = new AccountDTO(null, user.id, accountType, status, accountBalance);
         DESTINATION_ACCOUNT_ID = accountService.createAccount(account).id;
     }

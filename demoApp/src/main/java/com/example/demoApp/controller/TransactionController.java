@@ -38,7 +38,7 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TransactionDTO> createUser(@Valid @RequestBody TransactionDTO transaction, BindingResult bindingResult) {
+    public ResponseEntity<TransactionDTO> addTransaction(@Valid @RequestBody TransactionDTO transaction, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new RequestBindingException(bindingResult);
         }

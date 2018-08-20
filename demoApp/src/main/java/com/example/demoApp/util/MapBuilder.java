@@ -3,20 +3,22 @@ package com.example.demoApp.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class MapBuilder {
+public final class MapBuilder<T, U> {
 
     private boolean built;
 
-    private HashMap<String, Object> map = new HashMap<>();
+    private HashMap<T, U> map = new HashMap<>();
 
-    public static MapBuilder init() {
-        return new MapBuilder();
+    public static <T, U> MapBuilder<T, U> from(T key, U value) {
+        MapBuilder<T, U> builder = new MapBuilder<>();
+        builder.map.put(key, value);
+        return builder;
     }
 
     private MapBuilder() {
     }
 
-    public MapBuilder put(String key, Object value) {
+    public MapBuilder<T, U> and(T key, U value) {
         if (built) {
             throw new IllegalStateException("Map Already Built");
         }
@@ -24,7 +26,7 @@ public final class MapBuilder {
         return this;
     }
 
-    public Map<String, Object> build() {
+    public Map<T, U> build() {
         built = true;
         return map;
     }

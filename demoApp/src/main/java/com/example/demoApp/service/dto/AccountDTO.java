@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
@@ -17,15 +18,15 @@ public class AccountDTO {
     @JsonProperty(access = READ_ONLY)
     public Integer id;
 
-    @NotNull
+    @NotNull(groups = Default.class)
     public Integer ownerId;
 
     @JsonView(AccountTypeView.class)
-    @NotNull
+    @NotNull(groups = {Default.class, AccountTypeView.class})
     public AccountType type;
 
     @JsonView(AccountStatusView.class)
-    @NotNull
+    @NotNull(groups = {Default.class, AccountStatusView.class})
     public AccountStatus status;
 
     @JsonProperty(access = READ_ONLY)

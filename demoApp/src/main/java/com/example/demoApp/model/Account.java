@@ -34,6 +34,20 @@ public class Account {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus status;
 
+	public Account() {
+
+	}
+
+	public Account(Integer id, int version, @NotNull User owner, @NotNull double balance, @NotNull AccountType type,
+				   @NotNull AccountStatus status) {
+		this.id = id;
+		this.version = version;
+		this.owner = owner;
+		this.balance = balance;
+		this.type = type;
+		this.status = status;
+	}
+
 	public Integer getId() {
 		return id;
 	}
