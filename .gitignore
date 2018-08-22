@@ -1,8 +1,5 @@
-.gradle
 /build/
-!gradle/wrapper/gradle-wrapper.jar
 *~
-/demoApp/build/
 
 ### STS ###
 .apt_generated
