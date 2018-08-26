@@ -62,3 +62,24 @@ bootRun {
     systemProperties['DB_PASSWORD'] = DB_PASSWORD
     systemProperties['HIBERNATE_DIALECT'] = HIBERNATE_DIALECT
 }
+
+bootJar{
+	archiveName 'demoApp-M' + APP_MILESTONE
+	manifest {
+        attributes("version": APP_MILESTONE)
+    }
+}
+
+
+springBoot {
+	buildInfo {
+		properties {
+			artifact = 'demoApp'
+			version = APP_MILESTONE
+			group = 'com.example'
+			name = 'Demo App'
+		}
+	}
+}
+
+
