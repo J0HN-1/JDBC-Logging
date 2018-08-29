@@ -1,0 +1,137 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: jonathan
+      comment: 'Create USER table'
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: city
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: jonathan
+      comment: 'Create ACCOUNT table'
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: FK_account_owner_user_id
+                    references: user(id)
+              - column:
+                  name: balance
+                  type: double(10,2)
+                  defaultValueNumeric: 0.00
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_type
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_status
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 3
+      author: jonathan
+      comment: 'Create TRANSACTIONS table'
+      changes:
+        - createTable:
+            tableName: transaction
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: from_account
+                  type: int
+                  constraints:
+                    foreignKeyName: FK_transaction_from_account_id
+                    references: account(id)
+              - column:
+                  name: to_account
+                  type: int
+                  constraints:
+                    foreignKeyName: FK_transaction_to_account_id
+                    references: account(id)
+              - column:
+                  name: transaction_type
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: double(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_date
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comments
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

@@ -1,0 +1,113 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+plugins {
+  id 'org.liquibase.gradle' version '2.0.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.liquibase.gradle'
+
+group = '1shotmk'
+version = APP_VERSION
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+//    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.liquibase:liquibase-core'
+    compile 'org.apache.commons:commons-lang3'
+    compile 'joda-time:joda-time'
+
+    runtime 'mysql:mysql-connector-java'
+
+    testCompile 'com.h2database:h2'
+    testCompile 'io.rest-assured:rest-assured:3.1.0'
+    testCompile 'io.rest-assured:spring-mock-mvc:3.1.0'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'info.cukes:cucumber-junit:1.2.5'
+    testCompile 'info.cukes:cucumber-spring:1.2.5'
+    testCompile 'org.exparity:hamcrest-date:2.0.4'
+
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:3.6.1'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.0.0'
+    liquibaseRuntime 'mysql:mysql-connector-java'
+    liquibaseRuntime 'org.yaml:snakeyaml:1.17'
+
+}
+
+task startDB (type:Exec) {
+    commandLine "docker", "run", "--name", "demoAppDB", "-d", "--rm", "-p", "${DB_PORT}:3306", "-e", "MYSQL_USER=${DB_USERNAME}", "-e", "MYSQL_PASSWORD=${DB_PASSWORD}", "-e", "MYSQL_DATABASE=${DB_NAME}", "${project.group}/containers:DB-${APP_VERSION}"
+}
+
+task stopDB (type:Exec) {
+    commandLine "docker", "stop", "demoAppDB"
+}
+
+bootRun {
+    main = 'com.example.demoApp.DemoAppApplication'
+
+    systemProperties['APP_PORT'] = APP_PORT
+
+    systemProperties['DB_URL'] = "jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    systemProperties['DB_USERNAME'] = DB_USERNAME
+    systemProperties['DB_PASSWORD'] = DB_PASSWORD
+
+    //systemProperties['DB_DRIVER'] = 'com.mysql.jdbc.Driver'
+    //systemProperties['HIBERNATE_DIALECT'] = 'org.hibernate.dialect.MySQL5Dialect'
+}
+
+bootJar {
+    archiveName project.hasProperty('jar_name') ? project.jar_name : bootJar.archiveName
+	destinationDir project.hasProperty('jar_path') ? file(project.jar_path) : bootJar.destinationDir
+	manifest {
+        attributes("version": project.version)
+    }
+}
+
+
+springBoot {
+	buildInfo {
+		properties {
+			artifact = project.name
+			version = APP_VERSION
+			group = project.group
+			name = project.name
+		}
+	}
+}
+
+liquibase {
+	activities {
+	    main {
+            classpath project.rootDir.canonicalPath + '/src/main/resources'
+            changeLogFile '/db/changelog/db.changelog-master.yaml'
+            url "jdbc:mysql://${DB_HOST}:${DB_PORT}/${HUB_DB_NAME}"
+            driver 'com.mysql.jdbc.Driver'
+            username HUB_DB_USERNAME
+            password HUB_DB_PASSWORD
+	    }
+	}
+}
