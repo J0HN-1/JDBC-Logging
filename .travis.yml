@@ -1,5 +1,66 @@
 language: java
-env:
-  global:
-  - secure: eqWrBYyPTQt4dnNFc5cs4H0TkafXW7x8F5Zl4OD7pv8G1qirIIydUBD0XqT/bTk5ZRdYGr9H3F3pry4sBBpem/MN5fWMn/8tFOiIDqmfNxFzMu1t7WxHLcmEEcYaNC07bEhy5DNQ6B6e1yYDFR4O6EyarYMwlRmyjkVHvAsoTxJxUiBhxHP4toF7iTp7BiJnaim3T5HZ7KtmoY290rEyuoB2UBV4q229sfMAaga006rRzPHAuM0IhhO2+di5ziaXSeoBQxp1RHU1cGq7+E2zgzSSiHflP9YIPscTyvU2V2qfXTkAh//ET+pQpxL8pfei/OAe072IiPJvwlgijHv6V0zoJXg5YNxGfSV1BbiHWYjpSmEV1lSqb1SE0ROlaC4c89gk8lloZMBL/hZQOkyz5slXIHqhXNHoa2wS0ac+nhOZT3re+chPY/y1Bx54AoJK6EvNXvl+Txz4k7y0P0dRHQIL5ZOdOiMvE6b5pU9qmMFQ5SObZ0C2T66S5ff5uO3wMKufwq9hMRbDgmjYACTaLYhf4nBBWe7hYg/VF3BTA2VC47fp8KdbFCs71M9sgSGl7gcoxmCT3SA93IIP62aoXLfhiA0YRIHHWr12MVpuFHkTlaA9w+fuk3NTk0F9In/nw5W811gn6WuJkhL4FIOizVl1WBgo4nOJIkRvqxNhirM=
-  - secure: yINNucHsOwN/JtRgsbDwELy2AxbHR1xrQb82cdcZnGrt1o+aJvSMO7z919QH7Ce7atI6c214VJuSKlPy8KduBXv3Bz/gkK614j3kHxNm+Il56r7ePwXZckEm5ZIcarOVNDJR61vc8ul8Y3SAklvzdBlyFTRKI8hn9xpsg2Bh9Y0NZb4Mtn4GL0pZDbGrRR2SVnLVHEN/1KPq3X+EpKSp5+RyeexcypAmxHO79yE5Clo6qco90eOqJppwA84QSWnvf/MW6K7U4+QuZZBpfdbqq79gywmLyATMUuQOMZ8O+Pb1e6jHgIYszrdGChfv9OeovZ9OPjk2EFW0v8YlKUcAy6+7Zhp25o6ChQMCyqXClrvfXpjuEaHG8HQNhSFKSmr5/U5kfsVXuICzUwWgoA4jzQS6cDkmVJ3y7JdYgtnJ7ZI3ouajKOi8lWxNdxI+4Iy4kC3mmFqf6BYVzRNpLLy8OHbX7v1GdIj+q+NWqUI8gM1fWj7GUK4gtigk9aD//DzmCVxMssTg8cFjrHpUklJN6WorLaFvq9yo1wXeqEHaWYqtOrFeJbD3eVTOW2s6ECmx8XOqpeMjHXjGggRAVC5LZXu+TBX8Vf2BvJOSC0W5Y07Ov2sERtnPTOcwY7j241WXEyBXZ3xYSR2ISpYaBwb+CLztDz2mKgm06/KCU3zjk1U=
+
+jdk:
+  - openjdk8
+
+sudo: required
+
+branches:
+  only:
+    - master
+    - dev
+    - /^release-.*$/
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+jobs:
+  include:
+    #- stage: test
+      #default testing for all branches
+
+    - stage: publish
+      if: branch = master
+
+      env:
+        global:
+          - APP_JAR_DIR: "`pwd`/docker"
+          #- DB_JAR_DIR: "`pwd`/docker/dbBuild"
+          #- APP_VERSION: `grep APP_VERSION gradle.properties  | awk -F "=" '{print $2}'`
+          - JAR_NAME: "demoApp-${APP_VERSION}.jar"
+          #DOCKER_HUB_ID
+          - secure: w4aZ5vDJbp9sdIy6tmVtsUVNJjncSyG0dEA2JuJjv/u4BBX0Kj9CXMJYpeKFhqhHgkRIPiFNOrXQqzhc9Dg0h9I6g5DYRjdpiAA6WFmZkqM38tZ1E8Ktp6kcDSf23FsuZzlbej5Kc+JgfECfldltphzynWPq6ll7sUW6BVko/AXl2nrCaWbRVqOm9To/TcMKny6SVfL13YAbRnd7uCwebbrhcwXpTUGLWT1v8P9GZJ46YMzNc04jB9ZX26dZcRcSmURZgsg1Ufu4Bj+z6UqoAwxjP4YGsEeqyjpcZWi82J9qrePujSD+sFWeTOxqiLQV2GGlVUyHCYzWQ7Zfj5va0URbkergfe+5h0ksMA7mczrYaI/M6Xxm4uZGFOrqPnrYfPTZlNiq1V5TdASQTAk/E+OvggM9QnMomsEM1gfu0h/YD9KuECi0IMR/2n8oRXlodnddgmcuoXUW47Rmr4K2yUqkceYZJqBD2gairMRkM4v9H/t+GD00f9O5J4zj6vKU5ztNgxNW9bBYmzkZJRbSWNkNo4S8k7fkNbQ8UicnGgSns3E477lArTAS2GP2jpymB6kSwTDpoyAivlINtTP7PFjrjZnpwwJfcpNmMYAlM1e3gyCi1aAytau6m8klhl7O+6xCjFuafhU85tlakaDLDzYm4WC/ZzFpIeEZ72pOSTo=
+          #DOCKER_HUB_PASS
+          - secure: yINNucHsOwN/JtRgsbDwELy2AxbHR1xrQb82cdcZnGrt1o+aJvSMO7z919QH7Ce7atI6c214VJuSKlPy8KduBXv3Bz/gkK614j3kHxNm+Il56r7ePwXZckEm5ZIcarOVNDJR61vc8ul8Y3SAklvzdBlyFTRKI8hn9xpsg2Bh9Y0NZb4Mtn4GL0pZDbGrRR2SVnLVHEN/1KPq3X+EpKSp5+RyeexcypAmxHO79yE5Clo6qco90eOqJppwA84QSWnvf/MW6K7U4+QuZZBpfdbqq79gywmLyATMUuQOMZ8O+Pb1e6jHgIYszrdGChfv9OeovZ9OPjk2EFW0v8YlKUcAy6+7Zhp25o6ChQMCyqXClrvfXpjuEaHG8HQNhSFKSmr5/U5kfsVXuICzUwWgoA4jzQS6cDkmVJ3y7JdYgtnJ7ZI3ouajKOi8lWxNdxI+4Iy4kC3mmFqf6BYVzRNpLLy8OHbX7v1GdIj+q+NWqUI8gM1fWj7GUK4gtigk9aD//DzmCVxMssTg8cFjrHpUklJN6WorLaFvq9yo1wXeqEHaWYqtOrFeJbD3eVTOW2s6ECmx8XOqpeMjHXjGggRAVC5LZXu+TBX8Vf2BvJOSC0W5Y07Ov2sERtnPTOcwY7j241WXEyBXZ3xYSR2ISpYaBwb+CLztDz2mKgm06/KCU3zjk1U=
+          #GIT_ACCESS_TOKEN
+          - secure: mA/b/ZwYmxNh+U4OiAymdPXiz1MjhWaRybZl7lX63wf0rbhdaxx/n6XJ4Y8Jdj16gpx1pfSnPKzI4hodSK1alVHRxMsNbwUdbn0h57CnQ1T6yCRIfQ0nmP/hzxOi1we2NlKFzudiesYLAzslIpVrFHeNqtfGCt9CQEJ8GaMh9TC8sjbm1csvFkAtA+4XSH286H3ohGLykLSBw3JsOj9vYZBMiwr7TU1ZpnyGBaW9fbPLl3xHLy+5FoVte7b8kUA1gfOYAQoueIkvtxRVPkC0Fh6A238un/69/7Q9tMokJoz2j0Wkkl4RkrPv4lKXJgAdnb8QJHGXP2v+Ad/XuaRuP0vA0cleYiNUYQSbNzW3IuE2riwv3/6XMUaC2XnzVwEWBhn9KTRr4vJlfHFr5zTZ0razbFjP6SOrJbSo+fe2iBWl6ibz48cnDJ88vFubero6SPgmwFwyKyPWF/P8sLD595JnYGhnWvGGb64BdUOquWjqse3tnTPhj1aVjv/IWQSi+1kLt5gghP3eu34ybflDypk73Ybck4ooolJGW7KoB3veBFUlFBvrRvXsIN9S5jUYnOZHvzI27aq5YJWx279XUjw5VQ9IRncq9xspV5nYdHd08QttYxTE0422IfdFDy454ZIXp7yk0at49a6agHp+U5bbKlVYkpb5hDrNQkBMPCU=
+          - DOCKER_REPOSITORY: "${DOCKER_HUB_ID}/containers"
+
+      before_script:
+        - export `grep -ve '^#' -ve '\s' ./gradle.properties`
+        - docker login -u $DOCKER_HUB_ID -p $DOCKER_HUB_PASS
+
+      script:
+        - ./gradlew -Pjar_path=$JAR_DIR -Pjar_name=$JAR_NAME bootJar
+        - docker build --build-arg JAR_NAME=$JAR_NAME -t "${DOCKER_REPOSITORY}:demoApp-${APP_VERSION}" ${APP_JAR_DIR}
+        - docker run --name $DB_NAME -d --rm -p $DB_PORT:3306 -e MYSQL_USER=$DB_USERNAME -e MYSQL_PASSWORD=$DB_PASSWORD -e MYSQL_DATABASE=$DB_NAME mysql/mysql-server:5.7
+        - sleep 30
+        - ./gradlew update
+        - docker commit $DB_NAME "${DOCKER_REPOSITORY}:DB-${APP_VERSION}"
+        - docker push "${DOCKER_REPOSITORY}:demoApp-${APP_VERSION}"
+        - docker push "${DOCKER_REPOSITORY}:DB-${APP_VERSION}"
+        - curl -v -X POST -H "Content-Type: application/json" -H "Authorization: token ${GIT_ACCESS_TOKEN}" -d "{\"ref\":\"refs/heads/${APP_VERSION}\",\"sha\":\"${TRAVIS_COMMIT}\"}" https://api.github.com/repos/J0HN-1/JDBC-Logging/git/refs
+
+      notifications:
+        email:
+          recipients:
+            - secure: Fky9rKTYcUu8JlduPTeLI0e+DNU0fhwzYcmpHXnu02Y/pdg52Kb5Vf285M45skkwTlTy22lV5/9jUsMvF9q4ZiRwafQ0zHbIWPMeresAkI98LWS/V5pV8qE0IauGxWy0RnVe2IQl/RY13GIB4L37+M7KSRUE7FQ14ide+RrDAOcmjNrS4DF2ovkKhCQyYNMqzvqzc2S38bFSb+LoTMLew1jVszec+spKthS4o4D68qOzc9/qOwWJovSlCLOEb6LAfqRRNy7EKvKI1SvA6kSwkLKmpiRb9YlVjWBBV4KJvY6Jy7zzrzQ1KJDMLF6hgugDlYfwcYZqpEh+5YxsZgEkJ0e6DeYE5ayppCGujmg4ZiqvhpXJe0xjNm+snxLuDmYHLpL40cfVP1l9qRQ5jFE/u6N3kr7Oy8IreL7vQS5IXpIXoggf4m4IEDvBEtU0VVXlc1Z4nDCWJNVunYSzk4yUDbqAJAcm1yxKEXy5pVa9E86WaKJFN81WPzCd+CUc5NNfSRas1OcLmYr+Qr7KWmKOQJKBnEIY2SJ67splX0UIkK6tYVZXin6SmRxifBTerUP7gvFcHziLfV66ztjRjzwFTiH5yizrvTa63BKUBo/7eLNbYrk3Q7D0ssqFi1w0qAZ6xFlQpDxBnSTiSrPi6xJzVyvl+rvNLeMLhEp6ulyxPv0=
+          on_success: always
+          on_failure: always
+
