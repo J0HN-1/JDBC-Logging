@@ -102,11 +102,12 @@ springBoot {
 liquibase {
 	activities {
 	    main {
-	        changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
-	        url "jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+            classpath project.rootDir.canonicalPath + '/src/main/resources'
+            changeLogFile '/db/changelog/db.changelog-master.yaml'
+            url "jdbc:mysql://${DB_HOST}:${DB_PORT}/${HUB_DB_NAME}"
             driver 'com.mysql.jdbc.Driver'
-	        username DB_USERNAME
-	        password DB_PASSWORD
+            username HUB_DB_USERNAME
+            password HUB_DB_PASSWORD
 	    }
 	}
 }
